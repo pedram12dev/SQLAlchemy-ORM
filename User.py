@@ -18,15 +18,15 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy import BIGINT, VARCHAR, TIMESTAMP, func, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from mixins import TableNameMixin, TimestampMixin
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class User(Base):
+class User(Base, TableNameMixin, TimestampMixin):
     """ create user table  """
-    __tablename__ = "users"
     telegram_id = Mapped['int'] = mapped_column(
         BIGINT, primary_key=True
     )
@@ -38,9 +38,6 @@ class User(Base):
     )
     language_code = Mapped['int'] = mapped_column(
         VARCHAR(255), nullable=False
-    )
-    created_at = Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False, server_default=func.now()
     )
     referrer_id = Mapped[Optional['int']] = mapped_column(
         BIGINT, ForeignKey('users.telegram_id', ondelete='SET NULL')
