@@ -10,7 +10,7 @@
 """
 from typing import Optional
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
-from sqlalchemy import Integer,VARCHAR
+from sqlalchemy import Integer,VARCHAR,BIGINT,ForeignKey
 from mixins import TimestampMixin, TableNameMixin
 
 
@@ -28,3 +28,25 @@ class Product(Base,TableNameMixin,TimestampMixin):
     description = Mapped[Optional[str]] = mapped_column(
         VARCHAR(255)
     )
+
+"""
+    create sqlalchemy orm table without this value:
+
+    CREATE TABLE orders(
+    order_id SERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    FOREIGN KEY (user_id)
+        REFERENCES users(telegram_id)
+        ONDELETE CASCADE
+
+"""
+
+
+class Order(Base,TimestampMixin,TableNameMixin):
+    order_id = Mapped[int] = mapped_column(
+        Integer , primary_key=True
+    )
+    user_id = Mapped[int] = mapped_column(
+        BIGINT , ForeignKey("users.telegram_id", ondelete="SET NULL")
+    )
+
