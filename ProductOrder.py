@@ -10,7 +10,7 @@
 """
 from typing import Optional
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, VARCHAR, BIGINT, ForeignKey
+from sqlalchemy import Integer, VARCHAR, BIGINT, ForeignKey, URL, create_engine
 from mixins import TimestampMixin, TableNameMixin
 
 
@@ -19,13 +19,13 @@ class Base(DeclarativeBase):
 
 
 class Product(Base, TableNameMixin, TimestampMixin):
-    product_id = Mapped[int] = mapped_column(
+    product_id: Mapped[int] = mapped_column(
         Integer, primary_key=True
     )
-    title = Mapped[str] = mapped_column(
+    title: Mapped[str] = mapped_column(
         VARCHAR(255)
     )
-    description = Mapped[Optional[str]] = mapped_column(
+    description: Mapped[Optional[str]] = mapped_column(
         VARCHAR(255)
     )
 
@@ -44,10 +44,10 @@ class Product(Base, TableNameMixin, TimestampMixin):
 
 
 class Order(Base, TimestampMixin, TableNameMixin):
-    order_id = Mapped[int] = mapped_column(
+    order_id: Mapped[int] = mapped_column(
         Integer, primary_key=True
     )
-    user_id = Mapped[int] = mapped_column(
+    user_id: Mapped[int] = mapped_column(
         BIGINT, ForeignKey("users.telegram_id", ondelete="SET NULL")
     )
 
@@ -67,11 +67,13 @@ class Order(Base, TimestampMixin, TableNameMixin):
 """
 
 
-class OrderProduct(Base,TableNameMixin):
-    order_id = Mapped[int]=mapped_column(
-        Integer,ForeignKey("orders.order_id",ondelete="CASCADE"),primary_key=True
+class OrderProduct(Base, TableNameMixin):
+    order_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("orders.order_id", ondelete="CASCADE"), primary_key=True
     )
-    product_id = Mapped[int] = mapped_column(
-        Integer, ForeignKey("products.product_id",ondelete="RESTRICT"),primary_key=True
+    product_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("products.product_id", ondelete="RESTRICT"), primary_key=True
     )
-    quantity = Mapped[int]
+    quantity: Mapped[int]
+
+
