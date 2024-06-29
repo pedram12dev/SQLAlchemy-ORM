@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import pool, URL
 
 from alembic import context
 
@@ -14,11 +14,38 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+from environs import Env
+
+env = Env()
+env.read_env('.env')
+
+url = URL.create(
+    drivername="postgresql+psycopg2",
+    username = env.str("POSTGRES_USER"),
+    password = env.str("POSTGRES_PASSWORD"),
+    host = env.str("DATABASE_HOST"),
+    port = 5432,
+    database = env.str("POSTGRES_DB")
+).render_as_string(hide_password=False)
+
+
+
+config.set_main_option(
+    "sqlalchemy.url",
+    url
+)
+
+
+
+
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+import User
+
+
+target_metadata = User.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
