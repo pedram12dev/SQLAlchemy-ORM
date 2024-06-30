@@ -1,8 +1,7 @@
 from logging.config import fileConfig
-
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool, URL
-
+from sqlalchemy import pool, URL,create_engine
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -28,7 +27,8 @@ url = URL.create(
     database = env.str("POSTGRES_DB")
 ).render_as_string(hide_password=False)
 
-
+engine= create_engine(url , echo=True)
+sessionpool = sessionmaker(bind=engine)
 
 config.set_main_option(
     "sqlalchemy.url",
